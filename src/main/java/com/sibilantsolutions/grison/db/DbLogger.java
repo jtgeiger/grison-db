@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.sibilantsolutions.grison.db.dao.CamDao;
+import com.sibilantsolutions.grison.db.dao.ChangelogDao;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
@@ -23,12 +24,18 @@ public class DbLogger
     @Autowired
     private CamDao camDao;
 
+    @Autowired
+    private ChangelogDao changelogDao;
+
+
     private Number sessionDbId;
     final private Object sessionDbIdLock = new Object();
 
     public void go( final String hostname, final int port, final String username,
             final String password )
     {
+
+        log.info( "Database schema version={}.", changelogDao.getSchemaVersion() );
 
         AlarmHandlerI alarmHandler = new AlarmHandlerI()
         {
