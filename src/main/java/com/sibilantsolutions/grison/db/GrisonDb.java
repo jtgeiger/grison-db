@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.sibilantsolutions.grison.db.domain.CamParams;
 import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
 
 public class GrisonDb
@@ -20,13 +21,7 @@ public class GrisonDb
             @Override
             public void run()
             {
-                int i = 0;
-                String hostname = args[i++];
-                int port = Integer.parseInt( args[i++] );
-                String username = args[i++];
-                String password = args[i++];
-
-                new GrisonDb().start( hostname, port, username, password );
+                new GrisonDb().start();
             }
         };
 
@@ -35,14 +30,14 @@ public class GrisonDb
         r.run();
     }
 
-    private void start( final String hostname, final int port, final String username,
-            final String password )
+    private void start()
     {
         ApplicationContext ctx = initSpring();
 
         DbLogger dbLogger = ctx.getBean( DbLogger.class );
+        CamParams camParams = ctx.getBean( CamParams.class );
 
-        dbLogger.go( hostname, port, username, password );
+        dbLogger.go( camParams );
     }
 
     private ApplicationContext initSpring()

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.sibilantsolutions.grison.db.dao.CamDao;
 import com.sibilantsolutions.grison.db.dao.ChangelogDao;
+import com.sibilantsolutions.grison.db.domain.CamParams;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
@@ -31,8 +32,7 @@ public class DbLogger
     private Number sessionDbId;
     final private Object sessionDbIdLock = new Object();
 
-    public void go( final String hostname, final int port, final String username,
-            final String password )
+    public void go( CamParams camParams )
     {
 
         log.info( "Database schema version={}.", changelogDao.getSchemaVersion() );
@@ -61,8 +61,10 @@ public class DbLogger
 
         synchronized ( sessionDbIdLock )
         {
-            FoscamSession session = FoscamSession.connect( new InetSocketAddress( hostname, port ),
-                    username, password, null, null, alarmHandler, lostConnectionHandler );
+            FoscamSession session = FoscamSession.connect(
+                    new InetSocketAddress( camParams.getHostname(), camParams.getPort() ),
+                    camParams.getUsername(), camParams.getPassword(), null, null, alarmHandler,
+                    lostConnectionHandler );
 
             if ( session != null )
             {
