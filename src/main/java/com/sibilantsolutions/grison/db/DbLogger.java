@@ -14,7 +14,9 @@ import com.sibilantsolutions.grison.db.domain.CamParams;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
+import com.sibilantsolutions.grison.evt.LostConnectionEvt;
 import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
+import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
 
 @Component
 public class DbLogger
@@ -32,11 +34,26 @@ public class DbLogger
     private Number sessionDbId;
     final private Object sessionDbIdLock = new Object();
 
-    public void go( CamParams camParams )
+    public void go( final CamParams camParams )
     {
 
         log.info( "Database schema version={}.", changelogDao.getSchemaVersion() );
 
+        final LostConnectionHandlerI lostConnectionHandler = new LostConnectionHandlerI()
+        {
+
+            @Override
+            public void onLostConnection( LostConnectionEvt evt )
+            {
+                connectLoopThread( camParams, this );
+            }
+        };
+
+        connectLoopThread( camParams, lostConnectionHandler );
+    }
+
+    private void connect( final CamParams camParams, final LostConnectionHandlerI lostConnectionHandler )
+    {
         AlarmHandlerI alarmHandler = new AlarmHandlerI()
         {
 
@@ -57,23 +74,70 @@ public class DbLogger
             }
         };
 
-        LostConnectionHandlerI lostConnectionHandler = null;    //TODO
-
         synchronized ( sessionDbIdLock )
         {
-            FoscamSession session = FoscamSession.connect(
-                    new InetSocketAddress( camParams.getHostname(), camParams.getPort() ),
-                    camParams.getUsername(), camParams.getPassword(), null, null, alarmHandler,
-                    lostConnectionHandler );
+            String hostname = camParams.getHostname();
+            int port = camParams.getPort();
+            String username = camParams.getUsername();
+            String password = camParams.getPassword();
+
+            FoscamSession session = FoscamSession.connect( new InetSocketAddress( hostname, port ),
+                    username, password, null, null, alarmHandler, lostConnectionHandler );
 
             if ( session != null )
             {
                 long now = System.currentTimeMillis();
                 sessionDbId = camDao.sessionConnected( session.getCameraId(), session.getFirmwareVersion(), new Timestamp( now ) );
             }
-
         }
+    }
 
+
+    private void connectLoop( final CamParams camParams, final LostConnectionHandlerI lostConnectionHandler )
+    {
+        boolean connected = false;
+
+        while ( ! connected )
+        {
+            try
+            {
+                connect( camParams, lostConnectionHandler );
+                connected = true;
+            }
+            catch ( Exception e )
+            {
+                final int sleepSecs = 5;
+                log.info( "Failed to connect; sleeping " + sleepSecs + " seconds before retry:", e );
+
+                try
+                {
+                    Thread.sleep( sleepSecs * 1000 );
+                }
+                catch ( InterruptedException ignored )
+                {
+                }
+            }
+        }
+    }
+
+    private Thread connectLoopThread( final CamParams camParams, final LostConnectionHandlerI lostConnectionHandler )
+    {
+        Runnable r = new Runnable()
+        {
+
+            @Override
+            public void run()
+            {
+                connectLoop( camParams, lostConnectionHandler );
+            }
+        };
+
+        r = new DurationLoggingRunnable( r, "session connector" );
+
+        Thread t = new Thread( r, "session connector" );
+        t.start();
+
+        return t;
     }
 
 }
