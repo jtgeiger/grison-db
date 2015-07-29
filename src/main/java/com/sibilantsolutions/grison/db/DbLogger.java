@@ -11,9 +11,11 @@ import org.springframework.stereotype.Component;
 import com.sibilantsolutions.grison.db.dao.CamDao;
 import com.sibilantsolutions.grison.db.dao.ChangelogDao;
 import com.sibilantsolutions.grison.db.domain.CamParams;
+import com.sibilantsolutions.grison.db.handler.SessionDbIdHolderI;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
+import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.grison.evt.LostConnectionEvt;
 import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
 import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
@@ -30,8 +32,13 @@ public class DbLogger
     @Autowired
     private ChangelogDao changelogDao;
 
+    @Autowired
+    private ImageHandlerI imageHandler;
 
-    private Number sessionDbId;
+    @Autowired
+    private SessionDbIdHolderI sessionDbIdHolder;
+
+
     final private Object sessionDbIdLock = new Object();
 
     public void go( final CamParams camParams )
@@ -52,7 +59,7 @@ public class DbLogger
         connectLoopThread( camParams, lostConnectionHandler );
     }
 
-    private void connect( final CamParams camParams, final LostConnectionHandlerI lostConnectionHandler )
+    private FoscamSession connect( final CamParams camParams, final LostConnectionHandlerI lostConnectionHandler )
     {
         AlarmHandlerI alarmHandler = new AlarmHandlerI()
         {
@@ -67,29 +74,34 @@ public class DbLogger
                     //database id before we log the alarm event.
                 synchronized ( sessionDbIdLock )
                 {
-                    log.info( "Alarm type={}, sessionDbId={}.", evt.getAlarmNotify().getAlarmType(), sessionDbId );
+                    log.info( "Alarm type={}, sessionDbId={}.", evt.getAlarmNotify().getAlarmType(), sessionDbIdHolder.getSessionDbId() );
 
-                    camDao.alarm( evt.getAlarmNotify().getAlarmType(), new Timestamp( now ), sessionDbId );
+                    camDao.alarm( evt.getAlarmNotify().getAlarmType(), new Timestamp( now ), sessionDbIdHolder.getSessionDbId() );
                 }
             }
         };
 
+        String hostname = camParams.getHostname();
+        int port = camParams.getPort();
+        String username = camParams.getUsername();
+        String password = camParams.getPassword();
+
+        FoscamSession session;
+
         synchronized ( sessionDbIdLock )
         {
-            String hostname = camParams.getHostname();
-            int port = camParams.getPort();
-            String username = camParams.getUsername();
-            String password = camParams.getPassword();
-
-            FoscamSession session = FoscamSession.connect( new InetSocketAddress( hostname, port ),
-                    username, password, null, null, alarmHandler, lostConnectionHandler );
+            session = FoscamSession.connect( new InetSocketAddress( hostname, port ),
+                    username, password, null, imageHandler, alarmHandler, lostConnectionHandler );
 
             if ( session != null )
             {
                 long now = System.currentTimeMillis();
-                sessionDbId = camDao.sessionConnected( session.getCameraId(), session.getFirmwareVersion(), new Timestamp( now ) );
+                Number sessionDbId = camDao.sessionConnected( session.getCameraId(), session.getFirmwareVersion(), new Timestamp( now ) );
+                sessionDbIdHolder.setSessionDbId(sessionDbId);
             }
         }
+
+        return session;
     }
 
 
@@ -101,7 +113,8 @@ public class DbLogger
         {
             try
             {
-                connect( camParams, lostConnectionHandler );
+                FoscamSession session = connect( camParams, lostConnectionHandler );
+                session.videoStart();
                 connected = true;
             }
             catch ( Exception e )
