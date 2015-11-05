@@ -21,6 +21,9 @@ public class FileWriterImageHandlerImpl implements ImageHandlerI {
     @Autowired
     private SessionDbIdHolderI sessionDbIdHolder;
 
+    @Autowired
+    private FileWriterParams fileWriterParams;
+
     private long curTimestamp = Long.MIN_VALUE;
     private int curMsRepeatCounter = Integer.MIN_VALUE;
 
@@ -40,9 +43,10 @@ public class FileWriterImageHandlerImpl implements ImageHandlerI {
 
         Number sessionDbId = sessionDbIdHolder.getSessionDbId();
 
-        String filename = "" + sessionDbId + '_' + timestampMs + '_' + curMsRepeatCounter;
+        String filename = "" + sessionDbId + '_' + timestampMs + '_' + (curMsRepeatCounter < 10 ? "0" : "") + curMsRepeatCounter + ".jpg";
 
-        File file = new File(filename);
+        File file = new File(fileWriterParams.getParentDir(), filename);
+
         if (file.exists()) {
             throw new RuntimeException("file " + filename + " already exists.");
         }

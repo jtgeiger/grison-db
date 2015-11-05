@@ -29,4 +29,8 @@
         <property name="password" value="${cam.password}" />
     </bean>
 
+    <bean id="fileWriterParams" class="com.sibilantsolutions.grison.db.handler.FileWriterParams">
+        <constructor-arg value="${imageDir:data/images}" />
+    </bean>
+
 </beans>
