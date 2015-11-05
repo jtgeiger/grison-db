@@ -7,31 +7,32 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.sibilantsolutions.grison.db.dao.CamImageDao;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
-import com.sibilantsolutions.grison.evt.ImageHandlerI;
-import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
+import com.sibilantsolutions.grison.evt.AudioHandlerI;
+import com.sibilantsolutions.grison.evt.AudioStoppedEvt;
 
 @Component
-public class FileWriterImageHandlerImpl implements ImageHandlerI {
-
-    @Autowired
-    private CamImageDao camImageDao;
+public class FileWriterAudioHandlerImpl implements AudioHandlerI {
 
     @Autowired
     private SessionDbIdHolderI sessionDbIdHolder;
 
     @Autowired
-    private FileWriterParams imageFileWriterParams;
+    private FileWriterParams audioFileWriterParams;
 
     private long curTimestamp = Long.MIN_VALUE;
     private int curMsRepeatCounter = Integer.MIN_VALUE;
 
     @Override
-    public void onReceive(VideoDataText vdt) {
+    public void onAudioStopped(AudioStoppedEvt audioStoppedEvt) {
+        //No-op.
+    }
+
+    @Override
+    public void onReceive(AudioDataText audioData) {
         long now = System.currentTimeMillis();
-        byte[] dataContent = vdt.getDataContent();
-        long timestampMs = vdt.getTimestampMs();
+        byte[] dataContent = audioData.getDataContent();
+        long timestampMs = audioData.getTimestampMs();
 
         if (timestampMs == curTimestamp) {
             curMsRepeatCounter++;
@@ -43,9 +44,9 @@ public class FileWriterImageHandlerImpl implements ImageHandlerI {
 
         Number sessionDbId = sessionDbIdHolder.getSessionDbId();
 
-        String filename = "" + sessionDbId + '_' + timestampMs + '_' + (curMsRepeatCounter < 10 ? "0" : "") + curMsRepeatCounter + ".jpg";
+        String filename = "" + sessionDbId + '_' + timestampMs + '_' + (curMsRepeatCounter < 10 ? "0" : "") + curMsRepeatCounter + '.' + audioData.getAudioFormat().toString().toLowerCase();
 
-        File file = new File(imageFileWriterParams.getParentDir(), filename);
+        File file = new File(audioFileWriterParams.getParentDir(), filename);
 
         if (file.exists()) {
             throw new RuntimeException("file " + filename + " already exists.");
@@ -59,12 +60,7 @@ public class FileWriterImageHandlerImpl implements ImageHandlerI {
             throw new RuntimeException(e);
         }
 
-        camImageDao.insertImage(vdt, now, filename, sessionDbId);
-    }
-
-    @Override
-    public void onVideoStopped(VideoStoppedEvt arg0) {
-        //No-op.
+//        camImageDao.insertImage(vdt, now, filename, sessionDbId);
     }
 
 }

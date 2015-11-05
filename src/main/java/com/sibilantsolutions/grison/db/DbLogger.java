@@ -15,6 +15,7 @@ import com.sibilantsolutions.grison.db.handler.SessionDbIdHolderI;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
+import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.grison.evt.LostConnectionEvt;
 import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
@@ -34,6 +35,9 @@ public class DbLogger
 
     @Autowired
     private ImageHandlerI imageHandler;
+
+    @Autowired
+    private AudioHandlerI audioHandler;
 
     @Autowired
     private SessionDbIdHolderI sessionDbIdHolder;
@@ -91,7 +95,7 @@ public class DbLogger
         synchronized ( sessionDbIdLock )
         {
             session = FoscamSession.connect( new InetSocketAddress( hostname, port ),
-                    username, password, null, imageHandler, alarmHandler, lostConnectionHandler );
+                    username, password, audioHandler, imageHandler, alarmHandler, lostConnectionHandler );
 
             if ( session != null )
             {
@@ -115,6 +119,7 @@ public class DbLogger
             {
                 FoscamSession session = connect( camParams, lostConnectionHandler );
                 session.videoStart();
+                session.audioStart();
                 connected = true;
             }
             catch ( Exception e )
