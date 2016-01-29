@@ -1,13 +1,5 @@
 package com.sibilantsolutions.grison.db;
 
-import java.net.InetSocketAddress;
-import java.sql.Timestamp;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.sibilantsolutions.grison.db.dao.CamDao;
 import com.sibilantsolutions.grison.db.dao.ChangelogDao;
 import com.sibilantsolutions.grison.db.domain.CamParams;
@@ -20,6 +12,14 @@ import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.grison.evt.LostConnectionEvt;
 import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
 import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.net.InetSocketAddress;
+import java.sql.Timestamp;
 
 @Component
 public class DbLogger
@@ -42,10 +42,13 @@ public class DbLogger
     @Autowired
     private SessionDbIdHolderI sessionDbIdHolder;
 
+    @Autowired
+    private CamParams camParams;
 
     final private Object sessionDbIdLock = new Object();
 
-    public void go( final CamParams camParams )
+    @PostConstruct
+    public void go()
     {
 
         log.info( "Database schema version={}.", changelogDao.getSchemaVersion() );

@@ -1,5 +1,10 @@
 package com.sibilantsolutions.grison.db.domain;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+@Component
+@ConfigurationProperties(prefix = "cam")
 public class CamParams
 {
 
