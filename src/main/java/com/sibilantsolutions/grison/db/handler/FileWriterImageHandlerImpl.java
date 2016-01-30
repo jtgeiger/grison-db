@@ -1,7 +1,7 @@
 package com.sibilantsolutions.grison.db.handler;
 
-import com.sibilantsolutions.grison.db.model.CamImage;
-import com.sibilantsolutions.grison.db.repository.CamImageRepository;
+import com.sibilantsolutions.grison.db.persistence.entity.CamImage;
+import com.sibilantsolutions.grison.db.persistence.repository.CamImageRepository;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.grison.evt.VideoStoppedEvt;

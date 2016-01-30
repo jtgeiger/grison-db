@@ -1,6 +1,6 @@
 package com.sibilantsolutions.grison.db.handler;
 
-import com.sibilantsolutions.grison.db.model.CamSession;
+import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
 import org.springframework.stereotype.Component;
 
 @Component

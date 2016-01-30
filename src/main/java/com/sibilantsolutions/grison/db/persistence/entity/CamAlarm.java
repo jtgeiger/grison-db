@@ -1,4 +1,4 @@
-package com.sibilantsolutions.grison.db.model;
+package com.sibilantsolutions.grison.db.persistence.entity;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.AlarmTypeE;
 

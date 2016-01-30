@@ -1,4 +1,4 @@
-package com.sibilantsolutions.grison.db.dao;
+package com.sibilantsolutions.grison.db.persistence.dao;
 
 public interface ChangelogDao
 {

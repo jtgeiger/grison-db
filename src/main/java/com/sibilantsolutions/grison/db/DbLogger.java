@@ -1,12 +1,12 @@
 package com.sibilantsolutions.grison.db;
 
-import com.sibilantsolutions.grison.db.dao.ChangelogDao;
 import com.sibilantsolutions.grison.db.domain.CamParams;
 import com.sibilantsolutions.grison.db.handler.CamSessionHolder;
-import com.sibilantsolutions.grison.db.model.CamAlarm;
-import com.sibilantsolutions.grison.db.model.CamSession;
-import com.sibilantsolutions.grison.db.repository.CamAlarmRepository;
-import com.sibilantsolutions.grison.db.repository.CamSessionRepository;
+import com.sibilantsolutions.grison.db.persistence.dao.ChangelogDao;
+import com.sibilantsolutions.grison.db.persistence.entity.CamAlarm;
+import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
+import com.sibilantsolutions.grison.db.persistence.repository.CamAlarmRepository;
+import com.sibilantsolutions.grison.db.persistence.repository.CamSessionRepository;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;

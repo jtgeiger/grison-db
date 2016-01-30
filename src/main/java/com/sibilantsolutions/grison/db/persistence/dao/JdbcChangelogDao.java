@@ -1,11 +1,11 @@
-package com.sibilantsolutions.grison.db.dao;
-
-import javax.sql.DataSource;
+package com.sibilantsolutions.grison.db.persistence.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+
+import javax.sql.DataSource;
 
 @Repository
 public class JdbcChangelogDao implements ChangelogDao
