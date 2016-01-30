@@ -1,25 +1,26 @@
 package com.sibilantsolutions.grison.db.handler;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.sibilantsolutions.grison.db.dao.CamImageDao;
+import com.sibilantsolutions.grison.db.model.CamImage;
+import com.sibilantsolutions.grison.db.repository.CamImageRepository;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.Timestamp;
 
 @Component
 public class FileWriterImageHandlerImpl implements ImageHandlerI {
 
     @Autowired
-    private CamImageDao camImageDao;
+    CamImageRepository camImageRepository;
 
     @Autowired
-    private SessionDbIdHolderI sessionDbIdHolder;
+    CamSessionHolder camSessionHolder;
 
     @Autowired
     private FileWriterParams imageFileWriterParams;
@@ -41,7 +42,7 @@ public class FileWriterImageHandlerImpl implements ImageHandlerI {
             curTimestamp = timestampMs;
         }
 
-        Number sessionDbId = sessionDbIdHolder.getSessionDbId();
+        long sessionDbId = camSessionHolder.getCamSession().getId();
 
         String filename = "" + sessionDbId + '_' + timestampMs + '_' + (curMsRepeatCounter < 10 ? "0" : "") + curMsRepeatCounter + ".jpg";
 
@@ -59,7 +60,8 @@ public class FileWriterImageHandlerImpl implements ImageHandlerI {
             throw new RuntimeException(e);
         }
 
-        camImageDao.insertImage(vdt, now, filename, sessionDbId);
+        CamImage camImage = new CamImage(filename, new Timestamp(timestampMs), new Timestamp(now), vdt.getUptimeMs(), camSessionHolder.getCamSession());
+        camImageRepository.save(camImage);
     }
 
     @Override

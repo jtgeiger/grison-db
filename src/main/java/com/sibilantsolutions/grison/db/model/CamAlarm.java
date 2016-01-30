@@ -20,8 +20,30 @@ public class CamAlarm {
     Timestamp alarmTime;
 
     @ManyToOne
-    @JoinColumn(name = "camSession", updatable = false, insertable = false)
+    @JoinColumn(name = "camSession")
     CamSession camSession;
+
+    public CamAlarm(AlarmTypeE alarmType, Timestamp alarmTime, CamSession camSession) {
+        this.alarmType = alarmType;
+        this.alarmTime = alarmTime;
+        this.camSession = camSession;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public AlarmTypeE getAlarmType() {
+        return alarmType;
+    }
+
+    public Timestamp getAlarmTime() {
+        return alarmTime;
+    }
+
+    public CamSession getCamSession() {
+        return camSession;
+    }
 
     @Override
     public String toString() {

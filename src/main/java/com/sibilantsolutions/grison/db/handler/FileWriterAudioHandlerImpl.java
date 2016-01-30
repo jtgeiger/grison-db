@@ -1,21 +1,20 @@
 package com.sibilantsolutions.grison.db.handler;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.evt.AudioStoppedEvt;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 @Component
 public class FileWriterAudioHandlerImpl implements AudioHandlerI {
 
     @Autowired
-    private SessionDbIdHolderI sessionDbIdHolder;
+    CamSessionHolder camSessionHolder;
 
     @Autowired
     private FileWriterParams audioFileWriterParams;
@@ -42,7 +41,7 @@ public class FileWriterAudioHandlerImpl implements AudioHandlerI {
             curTimestamp = timestampMs;
         }
 
-        Number sessionDbId = sessionDbIdHolder.getSessionDbId();
+        long sessionDbId = camSessionHolder.getCamSession().getId();
 
         String filename = "" + sessionDbId + '_' + timestampMs + '_' + (curMsRepeatCounter < 10 ? "0" : "") + curMsRepeatCounter + '.' + audioData.getAudioFormat().toString().toLowerCase();
 

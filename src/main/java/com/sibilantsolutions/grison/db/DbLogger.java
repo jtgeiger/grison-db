@@ -1,9 +1,12 @@
 package com.sibilantsolutions.grison.db;
 
-import com.sibilantsolutions.grison.db.dao.CamDao;
 import com.sibilantsolutions.grison.db.dao.ChangelogDao;
 import com.sibilantsolutions.grison.db.domain.CamParams;
-import com.sibilantsolutions.grison.db.handler.SessionDbIdHolderI;
+import com.sibilantsolutions.grison.db.handler.CamSessionHolder;
+import com.sibilantsolutions.grison.db.model.CamAlarm;
+import com.sibilantsolutions.grison.db.model.CamSession;
+import com.sibilantsolutions.grison.db.repository.CamAlarmRepository;
+import com.sibilantsolutions.grison.db.repository.CamSessionRepository;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
@@ -28,7 +31,10 @@ public class DbLogger
     final static private Logger log = LoggerFactory.getLogger( DbLogger.class );
 
     @Autowired
-    private CamDao camDao;
+    CamSessionRepository camSessionRepository;
+
+    @Autowired
+    CamAlarmRepository camAlarmRepository;
 
     @Autowired
     private ChangelogDao changelogDao;
@@ -40,7 +46,7 @@ public class DbLogger
     private AudioHandlerI audioHandler;
 
     @Autowired
-    private SessionDbIdHolderI sessionDbIdHolder;
+    CamSessionHolder camSessionHolder;
 
     @Autowired
     private CamParams camParams;
@@ -81,9 +87,10 @@ public class DbLogger
                     //database id before we log the alarm event.
                 synchronized ( sessionDbIdLock )
                 {
-                    log.info( "Alarm type={}, sessionDbId={}.", evt.getAlarmNotify().getAlarmType(), sessionDbIdHolder.getSessionDbId() );
+                    log.info("Alarm type={}, sessionDbId={}.", evt.getAlarmNotify().getAlarmType(), camSessionHolder.getCamSession().getId());
 
-                    camDao.alarm( evt.getAlarmNotify().getAlarmType(), new Timestamp( now ), sessionDbIdHolder.getSessionDbId() );
+                    CamAlarm camAlarm = new CamAlarm(evt.getAlarmNotify().getAlarmType(), new Timestamp(now), camSessionHolder.getCamSession());
+                    camAlarm = camAlarmRepository.save(camAlarm);
                 }
             }
         };
@@ -103,8 +110,9 @@ public class DbLogger
             if ( session != null )
             {
                 long now = System.currentTimeMillis();
-                Number sessionDbId = camDao.sessionConnected( session.getCameraId(), session.getFirmwareVersion(), new Timestamp( now ) );
-                sessionDbIdHolder.setSessionDbId(sessionDbId);
+                CamSession camSession = new CamSession(session.getCameraId(), session.getFirmwareVersion().getMajor(), session.getFirmwareVersion().getMinor(), session.getFirmwareVersion().getPatch(), session.getFirmwareVersion().getBuild(), new Timestamp(now));
+                camSession = camSessionRepository.save(camSession);
+                camSessionHolder.setCamSession(camSession);
             }
         }
 
