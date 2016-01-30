@@ -23,6 +23,8 @@ public class CamAlarm {
     @JoinColumn(name = "camSession")
     CamSession camSession;
 
+    CamAlarm() {/*No-op*/}
+
     public CamAlarm(AlarmTypeE alarmType, Timestamp alarmTime, CamSession camSession) {
         this.alarmType = alarmType;
         this.alarmTime = alarmTime;

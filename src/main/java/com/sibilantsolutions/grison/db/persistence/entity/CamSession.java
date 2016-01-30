@@ -21,6 +21,8 @@ public class CamSession {
 
     Timestamp connectTime;
 
+    CamSession() {/*No-op*/}
+
     public CamSession(String cameraId, int firmwareVersionMajor, int firmwareVersionMinor, int firmwareVersionPatch, int firmwareVersionBuild, Timestamp connectTime) {
         this.cameraId = cameraId;
         this.firmwareVersionMajor = firmwareVersionMajor;

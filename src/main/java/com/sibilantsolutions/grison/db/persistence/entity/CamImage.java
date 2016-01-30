@@ -23,6 +23,8 @@ public class CamImage {
     @JoinColumn(name = "camSession")
     CamSession camSession;
 
+    CamImage() {/*No-op*/}
+
     public CamImage(String imageName, Timestamp camTimestamp, Timestamp serverTimestamp, long uptime, CamSession camSession) {
         this.imageName = imageName;
         this.camTimestamp = camTimestamp;
