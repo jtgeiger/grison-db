@@ -3,7 +3,9 @@ package com.sibilantsolutions.grison.db.persistence.entity;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.sql.Timestamp;
+import java.util.Set;
 
 @Entity
 public class CamSession {
@@ -20,6 +22,12 @@ public class CamSession {
     int firmwareVersionBuild;
 
     Timestamp connectTime;
+
+    @OneToMany(mappedBy = "camSession")
+    Set<CamAlarm> alarms;
+
+    @OneToMany(mappedBy = "camSession")
+    Set<CamImage> images;
 
     CamSession() {/*No-op*/}
 
@@ -58,6 +66,14 @@ public class CamSession {
 
     public Timestamp getConnectTime() {
         return connectTime;
+    }
+
+    public Set<CamAlarm> getAlarms() {
+        return alarms;
+    }
+
+    public Set<CamImage> getImages() {
+        return images;
     }
 
     @Override
