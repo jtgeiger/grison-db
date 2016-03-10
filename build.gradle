@@ -20,7 +20,7 @@ targetCompatibility = 1.7
 
 jar {
     baseName = 'grison-db'
-    version =  '0.0.1-SNAPSHOT'
+    version =  '0.2.0-SNAPSHOT'
 }
 
 repositories {
@@ -29,6 +29,7 @@ repositories {
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter"
+    compile "org.springframework.boot:spring-boot-starter-data-rest"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
     compile "com.sibilantsolutions.grison:grison:0.0.1"
     runtime "mysql:mysql-connector-java"
