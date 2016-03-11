@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.db;
 
 import com.sibilantsolutions.grison.db.config.CamParams;
 import com.sibilantsolutions.grison.db.handler.CamSessionHolder;
+import com.sibilantsolutions.grison.db.handler.ImageRecordingValve;
 import com.sibilantsolutions.grison.db.persistence.dao.ChangelogDao;
 import com.sibilantsolutions.grison.db.persistence.entity.CamAlarm;
 import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
@@ -11,7 +12,6 @@ import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
-import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.grison.evt.LostConnectionEvt;
 import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
 import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
@@ -40,7 +40,7 @@ public class DbLogger
     private ChangelogDao changelogDao;
 
     @Autowired
-    private ImageHandlerI imageHandler;
+    private ImageRecordingValve imageHandler;
 
     @Autowired
     private AudioHandlerI audioHandler;
