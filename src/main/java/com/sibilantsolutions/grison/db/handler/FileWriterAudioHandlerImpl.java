@@ -17,7 +17,7 @@ public class FileWriterAudioHandlerImpl implements AudioHandlerI {
     CamSessionHolder camSessionHolder;
 
     @Autowired
-    private FileWriterParams audioFileWriterParams;
+    File audioFileDir;
 
     private long curTimestamp = Long.MIN_VALUE;
     private int curMsRepeatCounter = Integer.MIN_VALUE;
@@ -45,7 +45,7 @@ public class FileWriterAudioHandlerImpl implements AudioHandlerI {
 
         String filename = "" + sessionDbId + '_' + timestampMs + '_' + (curMsRepeatCounter < 10 ? "0" : "") + curMsRepeatCounter + '.' + audioData.getAudioFormat().toString().toLowerCase();
 
-        File file = new File(audioFileWriterParams.getParentDir(), filename);
+        File file = new File(audioFileDir, filename);
 
         if (file.exists()) {
             throw new RuntimeException("file " + filename + " already exists.");

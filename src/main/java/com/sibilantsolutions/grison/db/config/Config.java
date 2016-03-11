@@ -1,6 +1,5 @@
 package com.sibilantsolutions.grison.db.config;
 
-import com.sibilantsolutions.grison.db.handler.FileWriterParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,13 +20,26 @@ public class Config {
     }
 
     @Bean
-    FileWriterParams imageFileWriterParams(@Value("${imageFileDir}") String dir) {
-        return new FileWriterParams(new File(dir));
+    File imageFileDir(@Value("${imageFileDir}") File dir) {
+        mkdir(dir);
+
+        return dir;
     }
 
     @Bean
-    FileWriterParams audioFileWriterParams(@Value("${audioFileDir}") String dir) {
-        return new FileWriterParams(new File(dir));
+    File audioFileDir(@Value("${audioFileDir}") File dir) {
+        mkdir(dir);
+
+        return dir;
+    }
+
+    private void mkdir(File dir) {
+        if (!dir.exists()) {
+            boolean success = dir.mkdirs();
+            if (!success) {
+                throw new RuntimeException("Failed to create parentDir from file=" + dir);
+            }
+        }
     }
 
 }

@@ -23,7 +23,7 @@ public class FileWriterImageHandlerImpl implements ImageHandlerI {
     CamSessionHolder camSessionHolder;
 
     @Autowired
-    private FileWriterParams imageFileWriterParams;
+    File imageFileDir;
 
     private long curTimestamp = Long.MIN_VALUE;
     private int curMsRepeatCounter = Integer.MIN_VALUE;
@@ -46,7 +46,7 @@ public class FileWriterImageHandlerImpl implements ImageHandlerI {
 
         String filename = "" + sessionDbId + '_' + timestampMs + '_' + (curMsRepeatCounter < 10 ? "0" : "") + curMsRepeatCounter + ".jpg";
 
-        File file = new File(imageFileWriterParams.getParentDir(), filename);
+        File file = new File(imageFileDir, filename);
 
         if (file.exists()) {
             throw new RuntimeException("file " + filename + " already exists.");
