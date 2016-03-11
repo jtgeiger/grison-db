@@ -47,7 +47,8 @@
   <logger name="com.sibilantsolutions.iptools.util.DurationLoggingCallable" level="INFO" />
   <logger name="com.sibilantsolutions.grison.Grison" level="INFO" />
   <logger name="com.sibilantsolutions.grison.driver.foscam.net.CgiService" level="INFO" />
-  <logger name="com.sibilantsolutions.grison.driver.foscam.net.FoscamConnection" level="INFO" />
+  <logger name="com.sibilantsolutions.grison.driver.foscam.net.FoscamConnection" level="WARN" />
+  <logger name="com.sibilantsolutions.grison.driver.foscam.net.FoscamConnection.keepalive" level="INFO" />
   <logger name="com.sibilantsolutions.grison.driver.foscam.net.FoscamSession" level="INFO" />
 
   <root level="INFO">
