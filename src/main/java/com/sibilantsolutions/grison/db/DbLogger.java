@@ -1,6 +1,6 @@
 package com.sibilantsolutions.grison.db;
 
-import com.sibilantsolutions.grison.db.domain.CamParams;
+import com.sibilantsolutions.grison.db.config.CamParams;
 import com.sibilantsolutions.grison.db.handler.CamSessionHolder;
 import com.sibilantsolutions.grison.db.persistence.dao.ChangelogDao;
 import com.sibilantsolutions.grison.db.persistence.entity.CamAlarm;
