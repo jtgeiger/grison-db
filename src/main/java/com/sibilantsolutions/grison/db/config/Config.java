@@ -20,14 +20,14 @@ public class Config {
     }
 
     @Bean
-    File imageFileDir(@Value("${imageFileDir}") File dir) {
+    File imageFileDir(@Value("${imageFileDir:data/images}") File dir) {
         mkdir(dir);
 
         return dir;
     }
 
     @Bean
-    File audioFileDir(@Value("${audioFileDir}") File dir) {
+    File audioFileDir(@Value("${audioFileDir:data/audio}") File dir) {
         mkdir(dir);
 
         return dir;
