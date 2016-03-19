@@ -169,4 +169,12 @@ public class DbLogger
         return t;
     }
 
+    public boolean isVideoRecordingEnabled() {
+        return imageHandler.isRecordingEnabled();
+    }
+
+    public void setVideoRecordingEnabled(boolean isVideoRecordingEnabled) {
+        imageHandler.setRecordingEnabled(isVideoRecordingEnabled);
+    }
+
 }
