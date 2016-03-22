@@ -1,6 +1,8 @@
 package com.sibilantsolutions.grison.db.web.controller;
 
 import com.sibilantsolutions.grison.db.DbLogger;
+import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
+import com.sibilantsolutions.grison.db.persistence.repository.CamSessionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @RepositoryRestController
 // It's a HACK to hard-code the "/api/v1" prefix, defined in spring.data.rest.basePath, but otherwise
@@ -23,11 +27,13 @@ public class CamSessionController {
     private static final Logger LOG = LoggerFactory.getLogger(CamSessionController.class);
 
     private final DbLogger dbLogger;
+    private final CamSessionRepository camSessionRepository;
 
     @Autowired
-    CamSessionController(DbLogger dbLogger) {
+    CamSessionController(DbLogger dbLogger, CamSessionRepository camSessionRepository) {
         LOG.info("\n\n\n Constructed {}.\n\n\n", getClass());
         this.dbLogger = dbLogger;
+        this.camSessionRepository = camSessionRepository;
     }
 
     @RequestMapping(path = "/{id}/custom")
@@ -36,6 +42,13 @@ public class CamSessionController {
         Resource<String> resource = new Resource<>("GOT HERE id=" + id);
         resource.add(new Link("http://example.com"));
         return ResponseEntity.ok(resource);
+    }
+
+    @RequestMapping("/connected")
+    @ResponseBody
+    public String findAllConnected() {
+        List<CamSession> list = camSessionRepository.findByAllConnected();
+        return list.toString();
     }
 
 }
