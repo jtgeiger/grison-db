@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.db.web.controller;
 
 import com.sibilantsolutions.grison.db.DbLogger;
+import com.sibilantsolutions.grison.db.business.CamSessionDto;
 import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
 import com.sibilantsolutions.grison.db.persistence.repository.CamSessionRepository;
 import org.slf4j.Logger;
@@ -54,19 +55,22 @@ public class CamSessionController {
     }
 
     @RequestMapping(value = "/videoStart", method = RequestMethod.PATCH)
-    public ResponseEntity<?> videoStart() {
+    public ResponseEntity<CamSessionDto> videoStart() {
         boolean success = dbLogger.getFoscamSession().videoStart();
+        CamSessionDto camSessionDto = new CamSessionDto(true, success, false);
+
         if (success) {
-            return ResponseEntity.ok().body("Video started.");
+            return new ResponseEntity<>(camSessionDto, HttpStatus.OK);
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("Failed to start video.");
+        return new ResponseEntity<>(camSessionDto, HttpStatus.NOT_MODIFIED);
     }
 
     @RequestMapping(value = "/videoEnd", method = RequestMethod.PATCH)
-    public ResponseEntity<?> videoEnd() {
+    public ResponseEntity<CamSessionDto> videoEnd() {
         dbLogger.getFoscamSession().videoEnd();
-        return ResponseEntity.ok().body("Video ended.");
+        CamSessionDto camSessionDto = new CamSessionDto(true, false, false);
+        return new ResponseEntity<>(camSessionDto, HttpStatus.OK);
     }
 
 }
