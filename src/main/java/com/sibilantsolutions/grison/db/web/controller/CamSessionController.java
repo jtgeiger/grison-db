@@ -2,6 +2,8 @@ package com.sibilantsolutions.grison.db.web.controller;
 
 import com.sibilantsolutions.grison.db.DbLogger;
 import com.sibilantsolutions.grison.db.business.CamSessionDto;
+import com.sibilantsolutions.grison.db.business.StreamStatusDto;
+import com.sibilantsolutions.grison.db.handler.CamSessionHolder;
 import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
 import com.sibilantsolutions.grison.db.persistence.repository.CamSessionRepository;
 import org.slf4j.Logger;
@@ -31,12 +33,14 @@ public class CamSessionController {
 
     private final DbLogger dbLogger;
     private final CamSessionRepository camSessionRepository;
+    private final CamSessionHolder camSessionHolder;
 
     @Autowired
-    CamSessionController(DbLogger dbLogger, CamSessionRepository camSessionRepository) {
+    CamSessionController(DbLogger dbLogger, CamSessionRepository camSessionRepository, CamSessionHolder camSessionHolder) {
         LOG.info("\n\n\n Constructed {}.\n\n\n", getClass());
         this.dbLogger = dbLogger;
         this.camSessionRepository = camSessionRepository;
+        this.camSessionHolder = camSessionHolder;
     }
 
     @RequestMapping(path = "/{id}/custom")
@@ -57,7 +61,8 @@ public class CamSessionController {
     @RequestMapping(value = "/videoStart", method = RequestMethod.PATCH)
     public ResponseEntity<CamSessionDto> videoStart() {
         boolean success = dbLogger.getFoscamSession().videoStart();
-        CamSessionDto camSessionDto = new CamSessionDto(true, success, false);
+        StreamStatusDto streamStatusDto = new StreamStatusDto(true, success, false);
+        CamSessionDto camSessionDto = new CamSessionDto(camSessionHolder.getCamSession(), streamStatusDto);
 
         if (success) {
             return new ResponseEntity<>(camSessionDto, HttpStatus.OK);
@@ -69,7 +74,8 @@ public class CamSessionController {
     @RequestMapping(value = "/videoEnd", method = RequestMethod.PATCH)
     public ResponseEntity<CamSessionDto> videoEnd() {
         dbLogger.getFoscamSession().videoEnd();
-        CamSessionDto camSessionDto = new CamSessionDto(true, false, false);
+        StreamStatusDto streamStatusDto = new StreamStatusDto(true, false, false);
+        CamSessionDto camSessionDto = new CamSessionDto(camSessionHolder.getCamSession(), streamStatusDto);
         return new ResponseEntity<>(camSessionDto, HttpStatus.OK);
     }
 

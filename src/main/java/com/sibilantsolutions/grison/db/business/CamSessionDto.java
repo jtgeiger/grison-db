@@ -1,28 +1,23 @@
 package com.sibilantsolutions.grison.db.business;
 
+import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
+
 public class CamSessionDto {
 
-    private boolean isConnected;
-    private boolean isVideoStarted;
-    private boolean isAudioStarted;
+    private CamSession camSession;
+    private StreamStatusDto streamStatusDto;
 
-    public CamSessionDto(boolean isConnected, boolean isVideoStarted, boolean isAudioStarted) {
-
-        this.isConnected = isConnected;
-        this.isVideoStarted = isVideoStarted;
-        this.isAudioStarted = isAudioStarted;
+    public CamSessionDto(CamSession camSession, StreamStatusDto streamStatusDto) {
+        this.camSession = camSession;
+        this.streamStatusDto = streamStatusDto;
     }
 
-    public boolean isConnected() {
-        return isConnected;
+    public CamSession getCamSession() {
+        return camSession;
     }
 
-    public boolean isVideoStarted() {
-        return isVideoStarted;
-    }
-
-    public boolean isAudioStarted() {
-        return isAudioStarted;
+    public StreamStatusDto getStreamStatusDto() {
+        return streamStatusDto;
     }
 
 }
