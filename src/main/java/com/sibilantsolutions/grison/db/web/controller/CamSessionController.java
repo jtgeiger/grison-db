@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -49,6 +51,22 @@ public class CamSessionController {
     public String findAllConnected() {
         List<CamSession> list = camSessionRepository.findByAllConnected();
         return list.toString();
+    }
+
+    @RequestMapping(value = "/videoStart", method = RequestMethod.PATCH)
+    public ResponseEntity<?> videoStart() {
+        boolean success = dbLogger.getFoscamSession().videoStart();
+        if (success) {
+            return ResponseEntity.ok().body("Video started.");
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("Failed to start video.");
+    }
+
+    @RequestMapping(value = "/videoEnd", method = RequestMethod.PATCH)
+    public ResponseEntity<?> videoEnd() {
+        dbLogger.getFoscamSession().videoEnd();
+        return ResponseEntity.ok().body("Video ended.");
     }
 
 }

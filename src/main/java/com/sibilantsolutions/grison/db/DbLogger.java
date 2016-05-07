@@ -9,11 +9,7 @@ import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
 import com.sibilantsolutions.grison.db.persistence.repository.CamAlarmRepository;
 import com.sibilantsolutions.grison.db.persistence.repository.CamSessionRepository;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
-import com.sibilantsolutions.grison.evt.AlarmEvt;
-import com.sibilantsolutions.grison.evt.AlarmHandlerI;
-import com.sibilantsolutions.grison.evt.AudioHandlerI;
-import com.sibilantsolutions.grison.evt.LostConnectionEvt;
-import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
+import com.sibilantsolutions.grison.evt.*;
 import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +49,15 @@ public class DbLogger
 
     final private Object sessionDbIdLock = new Object();
 
+    /*
+     * This is the "real" connection to the camera; whereas camSessionHolder has a reference to
+     * the database entity that represents the connection.
+     *
+     * We need to overhaul how the lifecycle and access to the two objects is handled, and revisit
+     * synchronization of connection logic and getting access to this object.
+     */
+    private FoscamSession foscamSession;
+
     @PostConstruct
     public void go()
     {
@@ -65,6 +70,8 @@ public class DbLogger
             @Override
             public void onLostConnection( LostConnectionEvt evt )
             {
+                log.warn("LOST CONNECTION to {}!", evt.getSession().getCameraId());
+                foscamSession = null;
                 connectLoopThread( camParams, this );
             }
         };
@@ -128,9 +135,9 @@ public class DbLogger
         {
             try
             {
-                FoscamSession session = connect( camParams, lostConnectionHandler );
-                session.videoStart();
-                session.audioStart();
+                foscamSession = connect(camParams, lostConnectionHandler);
+//                foscamSession.videoStart();
+//                foscamSession.audioStart();
                 connected = true;
             }
             catch ( Exception e )
@@ -175,6 +182,10 @@ public class DbLogger
 
     public void setVideoRecordingEnabled(boolean isVideoRecordingEnabled) {
         imageHandler.setRecordingEnabled(isVideoRecordingEnabled);
+    }
+
+    public FoscamSession getFoscamSession() {
+        return foscamSession;
     }
 
 }
