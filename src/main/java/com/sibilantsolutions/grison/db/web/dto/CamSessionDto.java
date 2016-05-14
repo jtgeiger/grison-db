@@ -1,4 +1,4 @@
-package com.sibilantsolutions.grison.db.business;
+package com.sibilantsolutions.grison.db.web.dto;
 
 import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
 

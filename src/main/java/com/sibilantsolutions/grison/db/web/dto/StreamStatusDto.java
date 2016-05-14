@@ -1,4 +1,4 @@
-package com.sibilantsolutions.grison.db.business;
+package com.sibilantsolutions.grison.db.web.dto;
 
 public class StreamStatusDto {
 

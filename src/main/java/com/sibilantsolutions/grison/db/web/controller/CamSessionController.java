@@ -1,11 +1,11 @@
 package com.sibilantsolutions.grison.db.web.controller;
 
 import com.sibilantsolutions.grison.db.DbLogger;
-import com.sibilantsolutions.grison.db.business.CamSessionDto;
-import com.sibilantsolutions.grison.db.business.StreamStatusDto;
 import com.sibilantsolutions.grison.db.handler.CamSessionHolder;
 import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
 import com.sibilantsolutions.grison.db.persistence.repository.CamSessionRepository;
+import com.sibilantsolutions.grison.db.web.dto.CamSessionDto;
+import com.sibilantsolutions.grison.db.web.dto.StreamStatusDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
