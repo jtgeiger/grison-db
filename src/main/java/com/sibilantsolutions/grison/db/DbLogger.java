@@ -8,8 +8,14 @@ import com.sibilantsolutions.grison.db.persistence.entity.CamAlarm;
 import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
 import com.sibilantsolutions.grison.db.persistence.repository.CamAlarmRepository;
 import com.sibilantsolutions.grison.db.persistence.repository.CamSessionRepository;
+import com.sibilantsolutions.grison.db.web.dto.AlarmDto;
+import com.sibilantsolutions.grison.db.web.websocket.AlarmBroadcaster;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
-import com.sibilantsolutions.grison.evt.*;
+import com.sibilantsolutions.grison.evt.AlarmEvt;
+import com.sibilantsolutions.grison.evt.AlarmHandlerI;
+import com.sibilantsolutions.grison.evt.AudioHandlerI;
+import com.sibilantsolutions.grison.evt.LostConnectionEvt;
+import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
 import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.net.InetSocketAddress;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Component
 public class DbLogger
@@ -46,6 +53,9 @@ public class DbLogger
 
     @Autowired
     private CamParams camParams;
+
+    @Autowired
+    private AlarmBroadcaster alarmBroadcaster;
 
     final private Object sessionDbIdLock = new Object();
 
@@ -98,6 +108,8 @@ public class DbLogger
 
                     CamAlarm camAlarm = new CamAlarm(evt.getAlarmNotify().getAlarmType(), new Timestamp(now), camSessionHolder.getCamSession());
                     camAlarm = camAlarmRepository.save(camAlarm);
+
+                    alarmBroadcaster.broadcast(new AlarmDto(evt.getAlarmNotify().getAlarmType(), new Date(now)));
                 }
             }
         };
