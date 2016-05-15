@@ -20,7 +20,7 @@
             stompClient.connect({}, function (frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/alarms', function (dataFrame) {
+                stompClient.subscribe('/topic/sessions', function (dataFrame) {
                     showAlarm(JSON.parse(dataFrame.body));
                 });
             });
@@ -34,11 +34,12 @@
             console.log("Disconnected");
         }
 
-        function showAlarm(alarmDto) {
+        function showAlarm(camSessionDto) {
             var response = document.getElementById('response');
             var p = document.createElement('p');
             p.style.wordWrap = 'break-word';
-            p.appendChild(document.createTextNode(alarmDto.alarmType + ' ' + new Date(alarmDto.timestamp)));
+            p.appendChild(document.createTextNode(camSessionDto.cameraSessionId + ' ' +
+                    camSessionDto.alarmStatus.alarmType + ' ' + new Date(camSessionDto.alarmStatus.timestamp)));
             response.appendChild(p);
         }
     </script>

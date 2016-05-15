@@ -11,7 +11,7 @@ import com.sibilantsolutions.grison.db.persistence.repository.CamSessionReposito
 import com.sibilantsolutions.grison.db.web.dto.AlarmStatusDto;
 import com.sibilantsolutions.grison.db.web.dto.CamSessionDto;
 import com.sibilantsolutions.grison.db.web.dto.StreamStatusDto;
-import com.sibilantsolutions.grison.db.web.websocket.AlarmBroadcaster;
+import com.sibilantsolutions.grison.db.web.websocket.CamSessionStatusBroadcaster;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
@@ -57,7 +57,7 @@ public class DbLogger
     private CamParams camParams;
 
     @Autowired
-    private AlarmBroadcaster alarmBroadcaster;
+    private CamSessionStatusBroadcaster camSessionStatusBroadcaster;
 
     final private Object sessionDbIdLock = new Object();
 
@@ -116,7 +116,7 @@ public class DbLogger
                     CamSessionDto camSessionDto = new CamSessionDto(oldCamSessionDto.getCameraSessionId(), true, oldCamSessionDto.getStreamStatus(), alarmStatusDto);
                     camSessionHolder.setCamSessionDto(camSessionDto);
 
-                    alarmBroadcaster.broadcast(alarmStatusDto);
+                    camSessionStatusBroadcaster.broadcast(camSessionDto);
                 }
             }
         };
