@@ -4,12 +4,12 @@ import com.sibilantsolutions.grison.driver.foscam.domain.AlarmTypeE;
 
 import java.util.Date;
 
-public class AlarmDto {
+public class AlarmStatusDto {
 
     private final AlarmTypeE alarmType;
     private final Date timestamp;
 
-    public AlarmDto(AlarmTypeE alarmType, Date timestamp) {
+    public AlarmStatusDto(AlarmTypeE alarmType, Date timestamp) {
         this.alarmType = alarmType;
         this.timestamp = timestamp;
     }

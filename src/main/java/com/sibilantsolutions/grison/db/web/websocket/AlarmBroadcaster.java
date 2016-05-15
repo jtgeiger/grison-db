@@ -1,9 +1,9 @@
 package com.sibilantsolutions.grison.db.web.websocket;
 
-import com.sibilantsolutions.grison.db.web.dto.AlarmDto;
+import com.sibilantsolutions.grison.db.web.dto.AlarmStatusDto;
 
 public interface AlarmBroadcaster {
 
-    void broadcast(AlarmDto alarmDto);
+    void broadcast(AlarmStatusDto alarmStatusDto);
 
 }

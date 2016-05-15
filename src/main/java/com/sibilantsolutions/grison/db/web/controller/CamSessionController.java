@@ -4,22 +4,20 @@ import com.sibilantsolutions.grison.db.DbLogger;
 import com.sibilantsolutions.grison.db.handler.CamSessionHolder;
 import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
 import com.sibilantsolutions.grison.db.persistence.repository.CamSessionRepository;
-import com.sibilantsolutions.grison.db.web.dto.CamSessionDto;
-import com.sibilantsolutions.grison.db.web.dto.StreamStatusDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RepositoryRestController
 // It's a HACK to hard-code the "/api/v1" prefix, defined in spring.data.rest.basePath, but otherwise
@@ -48,7 +46,7 @@ public class CamSessionController {
     public ResponseEntity<?> customControllerMethod(@PathVariable long id) {
         Resource<String> resource = new Resource<>("GOT HERE id=" + id);
         resource.add(new Link("http://example.com"));
-        return ResponseEntity.ok(resource);
+        return ok(resource);
     }
 
     @RequestMapping("/connected")
@@ -57,7 +55,7 @@ public class CamSessionController {
         List<CamSession> list = camSessionRepository.findByAllConnected();
         return list.toString();
     }
-
+/*
     @RequestMapping(value = "/videoStart", method = RequestMethod.PATCH)
     public ResponseEntity<CamSessionDto> videoStart() {
         boolean success = dbLogger.getFoscamSession().videoStart();
@@ -78,5 +76,5 @@ public class CamSessionController {
         CamSessionDto camSessionDto = new CamSessionDto(camSessionHolder.getCamSession(), streamStatusDto);
         return new ResponseEntity<>(camSessionDto, HttpStatus.OK);
     }
-
+*/
 }

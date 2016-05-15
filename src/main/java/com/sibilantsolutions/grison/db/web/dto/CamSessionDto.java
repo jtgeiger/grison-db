@@ -1,23 +1,33 @@
 package com.sibilantsolutions.grison.db.web.dto;
 
-import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
-
 public class CamSessionDto {
 
-    private CamSession camSession;
-    private StreamStatusDto streamStatusDto;
+    private final long cameraSessionId;
+    private final boolean isConnected;
+    private final AlarmStatusDto alarmStatus;
+    private final StreamStatusDto streamStatus;
 
-    public CamSessionDto(CamSession camSession, StreamStatusDto streamStatusDto) {
-        this.camSession = camSession;
-        this.streamStatusDto = streamStatusDto;
+    public CamSessionDto(long cameraSessionId, boolean isConnected, StreamStatusDto streamStatus, AlarmStatusDto alarmStatus) {
+        this.cameraSessionId = cameraSessionId;
+        this.isConnected = isConnected;
+        this.streamStatus = streamStatus;
+        this.alarmStatus = alarmStatus;
     }
 
-    public CamSession getCamSession() {
-        return camSession;
+    public long getCameraSessionId() {
+        return cameraSessionId;
     }
 
-    public StreamStatusDto getStreamStatusDto() {
-        return streamStatusDto;
+    public StreamStatusDto getStreamStatus() {
+        return streamStatus;
+    }
+
+    public AlarmStatusDto getAlarmStatus() {
+        return alarmStatus;
+    }
+
+    public boolean isConnected() {
+        return isConnected;
     }
 
 }

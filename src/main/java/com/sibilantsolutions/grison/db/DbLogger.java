@@ -8,7 +8,9 @@ import com.sibilantsolutions.grison.db.persistence.entity.CamAlarm;
 import com.sibilantsolutions.grison.db.persistence.entity.CamSession;
 import com.sibilantsolutions.grison.db.persistence.repository.CamAlarmRepository;
 import com.sibilantsolutions.grison.db.persistence.repository.CamSessionRepository;
-import com.sibilantsolutions.grison.db.web.dto.AlarmDto;
+import com.sibilantsolutions.grison.db.web.dto.AlarmStatusDto;
+import com.sibilantsolutions.grison.db.web.dto.CamSessionDto;
+import com.sibilantsolutions.grison.db.web.dto.StreamStatusDto;
 import com.sibilantsolutions.grison.db.web.websocket.AlarmBroadcaster;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
@@ -109,7 +111,12 @@ public class DbLogger
                     CamAlarm camAlarm = new CamAlarm(evt.getAlarmNotify().getAlarmType(), new Timestamp(now), camSessionHolder.getCamSession());
                     camAlarmRepository.save(camAlarm);
 
-                    alarmBroadcaster.broadcast(new AlarmDto(evt.getAlarmNotify().getAlarmType(), new Date(now)));
+                    AlarmStatusDto alarmStatusDto = new AlarmStatusDto(evt.getAlarmNotify().getAlarmType(), new Date(now));
+                    CamSessionDto oldCamSessionDto = camSessionHolder.getCamSessionDto();
+                    CamSessionDto camSessionDto = new CamSessionDto(oldCamSessionDto.getCameraSessionId(), true, oldCamSessionDto.getStreamStatus(), alarmStatusDto);
+                    camSessionHolder.setCamSessionDto(camSessionDto);
+
+                    alarmBroadcaster.broadcast(alarmStatusDto);
                 }
             }
         };
@@ -130,6 +137,8 @@ public class DbLogger
             CamSession camSession = new CamSession(session.getCameraId(), session.getFirmwareVersion().getMajor(), session.getFirmwareVersion().getMinor(), session.getFirmwareVersion().getPatch(), session.getFirmwareVersion().getBuild(), new Timestamp(now));
             camSession = camSessionRepository.save(camSession);
             camSessionHolder.setCamSession(camSession);
+            CamSessionDto camSessionDto = new CamSessionDto(camSession.getId(), true, new StreamStatusDto(false, false), null);
+            camSessionHolder.setCamSessionDto(camSessionDto);
         }
 
         return session;
