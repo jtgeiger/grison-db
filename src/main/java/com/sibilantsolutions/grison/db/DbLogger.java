@@ -107,7 +107,7 @@ public class DbLogger
                     log.info("Alarm type={}, sessionDbId={}.", evt.getAlarmNotify().getAlarmType(), camSessionHolder.getCamSession().getId());
 
                     CamAlarm camAlarm = new CamAlarm(evt.getAlarmNotify().getAlarmType(), new Timestamp(now), camSessionHolder.getCamSession());
-                    camAlarm = camAlarmRepository.save(camAlarm);
+                    camAlarmRepository.save(camAlarm);
 
                     alarmBroadcaster.broadcast(new AlarmDto(evt.getAlarmNotify().getAlarmType(), new Date(now)));
                 }
@@ -126,13 +126,10 @@ public class DbLogger
             session = FoscamSession.connect( new InetSocketAddress( hostname, port ),
                     username, password, audioHandler, imageHandler, alarmHandler, lostConnectionHandler );
 
-            if ( session != null )
-            {
-                long now = System.currentTimeMillis();
-                CamSession camSession = new CamSession(session.getCameraId(), session.getFirmwareVersion().getMajor(), session.getFirmwareVersion().getMinor(), session.getFirmwareVersion().getPatch(), session.getFirmwareVersion().getBuild(), new Timestamp(now));
-                camSession = camSessionRepository.save(camSession);
-                camSessionHolder.setCamSession(camSession);
-            }
+            long now = System.currentTimeMillis();
+            CamSession camSession = new CamSession(session.getCameraId(), session.getFirmwareVersion().getMajor(), session.getFirmwareVersion().getMinor(), session.getFirmwareVersion().getPatch(), session.getFirmwareVersion().getBuild(), new Timestamp(now));
+            camSession = camSessionRepository.save(camSession);
+            camSessionHolder.setCamSession(camSession);
         }
 
         return session;
