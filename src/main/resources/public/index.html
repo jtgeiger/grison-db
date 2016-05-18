@@ -40,7 +40,7 @@
             p.style.wordWrap = 'break-word';
             p.appendChild(document.createTextNode(camSessionDto.cameraSessionId + ' ' +
                     camSessionDto.alarmStatus.alarmType + ' ' + new Date(camSessionDto.alarmStatus.timestamp)));
-            response.appendChild(p);
+            response.insertBefore(p, response.firstChild);
         }
     </script>
 </head>
