@@ -6,14 +6,13 @@ import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-@Component
+//@Component
 public class FileWriterImageHandlerImpl implements ImageHandlerI {
 
     @Autowired

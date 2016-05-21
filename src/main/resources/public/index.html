@@ -2,8 +2,7 @@
 <html>
 <head>
     <title>Hello WebSocket</title>
-    <script src="js/sockjs-0.3.4.js"></script>
-    <script src="js/stomp.js"></script>
+    <script src="js/webstomp.js"></script>
     <script type="text/javascript">
         var stompClient = null;
 
@@ -15,14 +14,22 @@
         }
 
         function connect() {
-            var socket = new SockJS('/camera');
-            stompClient = Stomp.over(socket);
+            stompClient = webstomp.client("ws://" + location.host + '/camera',
+                    {binary: false, heartbeat: {outgoing: 10000, incoming: 10000}, debug: false});
+
             stompClient.connect({}, function (frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
+
                 stompClient.subscribe('/topic/sessions', function (dataFrame) {
                     showAlarm(JSON.parse(dataFrame.body));
                 });
+
+
+                stompClient.subscribe('/topic/images', function (dataFrame) {
+                    showImage(dataFrame.body);
+                });
+
             });
         }
 
@@ -34,13 +41,20 @@
             console.log("Disconnected");
         }
 
+        function showImage(ba) {
+            ba = JSON.parse(ba);
+            var img = new Image();
+            img.src = "data:image/jpeg;base64," + ba.imageBytes;
+            var imageDiv = document.getElementById("imageDiv");
+            imageDiv.replaceChild(img, imageDiv.firstChild);
+            var resp = document.getElementById("timestamp");
+            resp.innerHTML = new Date(parseInt(ba.timestamp));
+        }
+
         function showAlarm(camSessionDto) {
             var response = document.getElementById('response');
-            var p = document.createElement('p');
-            p.style.wordWrap = 'break-word';
-            p.appendChild(document.createTextNode(camSessionDto.cameraSessionId + ' ' +
-                    camSessionDto.alarmStatus.alarmType + ' ' + new Date(camSessionDto.alarmStatus.timestamp)));
-            response.insertBefore(p, response.firstChild);
+            response.innerHTML = camSessionDto.cameraSessionId + ' ' +
+                    camSessionDto.alarmStatus.alarmType + ' ' + new Date(camSessionDto.alarmStatus.timestamp);
         }
     </script>
 </head>
@@ -55,6 +69,9 @@
     </div>
     <div id="conversationDiv">
         <p id="response"></p>
+        <p id="timestamp"></p>
+        <div id="imageDiv">
+        </div>
     </div>
 </div>
 </body>

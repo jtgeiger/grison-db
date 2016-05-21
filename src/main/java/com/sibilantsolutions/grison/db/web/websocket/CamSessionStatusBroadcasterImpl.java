@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.db.web.websocket;
 
 import com.sibilantsolutions.grison.db.web.dto.CamSessionDto;
+import com.sibilantsolutions.grison.db.web.dto.ImageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,11 @@ public class CamSessionStatusBroadcasterImpl implements CamSessionStatusBroadcas
     @Override
     public void broadcast(CamSessionDto camSessionDto) {
         messagingTemplate.convertAndSend("/topic/sessions", camSessionDto);
+    }
+
+    @Override
+    public void broadcast(ImageDto imageDto) {
+        messagingTemplate.convertAndSend("/topic/images", imageDto);
     }
 
 }
